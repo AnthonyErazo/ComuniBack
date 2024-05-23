@@ -47,21 +47,32 @@ class GroupDao {
         }
     }
     async create() {
-        const newGroup =await this.model.create({})
+        const group={
+            name:'',
+            img:{
+                name:'',
+                ref:''
+            },
+            description:'',
+            status:false,
+            linkgroup:'',
+            notice:[]
+        }
+        const newGroup =await this.model.create(group)
         return { success: "success", payload: newGroup };
     }
     async update(gid, groupUpdate) {
         const existingGroup = await this.model.findOne({ _id: gid}).lean();
 
         if (existingGroup) {
-            const allowedProperties = ['name','description','status','linkgroup'];
+            const allowedProperties = ['name','img','description','status','linkgroup'];
             const sanitizedGroup = Object.keys(groupUpdate)
                 .filter(key => allowedProperties.includes(key))
                 .reduce((obj, key) => {
                     obj[key] = groupUpdate[key];
                     return obj;
                 }, {});
-            const result = await this.model.updateOne({ _id: uid}, sanitizedGroup);
+            const result = await this.model.updateOne({ _id: gid}, sanitizedGroup);
             if (result.modifiedCount > 0) {
                 return { status: "success", message: 'Grupo actualizado correctamente' };
             } else {
@@ -79,10 +90,10 @@ class GroupDao {
             throw new Error('Grupo no encontrado')
         }
     }
-    async addNotice(gip, urls) {
-        const result = await groupsModel.updateOne(
-            { _id: gip },
-            { $push: { notice: { $each: urls } } }
+    async addNotice(gid, notices) {
+        const result = await this.model.updateOne(
+            { _id: gid },
+            { $push: { notice: { $each: notices } } }
         );
         if (result.modifiedCount > 0) {
             return { status: "success", message: 'Noticia agregada correctamente' };
@@ -90,10 +101,10 @@ class GroupDao {
             throw new Error('No se pudo agregar la noticia');
         }
     }
-    async deleteNotice(gid, noticeUrl) {
-        const result = await groupsModel.updateOne(
+    async deleteNotice(gid, notice) {
+        const result = await this.model.updateOne(
             { _id: gid },
-            { $pull: { notice: noticeUrl } }
+            { $pull: { notice: { name: notice.name, ref: notice.ref } } }
         );
         if (result.modifiedCount > 0) {
             return { status: "success", message: 'Noticia eliminada correctamente' };
@@ -102,7 +113,7 @@ class GroupDao {
         }
     }
     async deleteAllNotices(gid) {
-        const result = await groupsModel.updateOne(
+        const result = await this.model.updateOne(
             { _id: gid },
             { $set: { notice: [] } }
         );
@@ -112,9 +123,6 @@ class GroupDao {
             throw new Error('No se pudieron eliminar las noticias');
         }
     }
-    
-    
-    
 }
 
 exports.GroupMongo = GroupDao;

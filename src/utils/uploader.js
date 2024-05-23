@@ -1,11 +1,11 @@
-const { configObject } = require('../config/configObject')
-const multer = require('multer');
-const admin = require('firebase-admin');
+const { configObject } = require("../config/configObject");
+const multer = require("multer");
+const admin = require("firebase-admin");
 
 const serviceAccount = JSON.parse(configObject.FIREBASE_SERVICE_ACCOUNT);
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: configObject.STORAGE_BUCKET
+    storageBucket: configObject.STORAGE_BUCKET,
 });
 const firebaseBucket = admin.storage().bucket();
 
@@ -18,22 +18,29 @@ const uploadToFirebase = async (file) => {
 
     await fileRef.save(fileBuffer, { metadata });
 
-    const url = await fileRef.getSignedUrl({ action: 'read', expires: '01-01-2030' });
+    const url = await fileRef.getSignedUrl({
+        action: "read",
+        expires: "01-01-2030",
+    });
 
-    return url;
+    return { ref: url[0], name: filename };
+};
+const deleteFromFirebase = async (imagename) => {
+    await firebaseBucket.file(imagename).delete();
 };
 
 const storageFirebase = multer.memoryStorage();
 
 const uploaderFirebase = multer({
-    storage:storageFirebase,
+    storage: storageFirebase,
     onError: function (error, next) {
         console.error(error);
         next();
-    }
+    },
 });
 
 module.exports = {
     uploaderFirebase,
-    uploadToFirebase
+    uploadToFirebase,
+    deleteFromFirebase
 };

@@ -8,8 +8,8 @@ class GroupRepository {
     createGroup = async () => await this.dao.create()
     updateGroup = async (gid, groupUpdate) => await this.dao.update(gid, groupUpdate)
     deleteGroup = async (gid) => await this.dao.delete(gid)
-    addNoticeToGroup = async (gid,urls) => await this.dao.addNotice(gid,urls)
-    deleteNoticeFromGroup = async (gid,noticeUrl) => await this.dao.deleteNotice(gid,noticeUrl)
+    addNoticeToGroup = async (gid,notices) => await this.dao.addNotice(gid,notices)
+    deleteNoticeFromGroup = async (gid,notice) => await this.dao.deleteNotice(gid,notice)
     deleteAllNoticesFromGroup = async (gid) => await this.dao.deleteAllNotices(gid)
 
 }

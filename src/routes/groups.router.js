@@ -5,11 +5,11 @@ const { uploaderFirebase } = require('../utils/uploader');
 const {
     getGroups,
     getGroup,
-    deleteGroup,
     updateGroup,
     addNoticeToGroup,
     deleteAllNoticesFromGroup,
-    deleteNoticeFromGroup
+    deleteNoticeFromGroup,
+    addImageGroup
 } = new GroupController()
 
 const router = Router();
@@ -18,7 +18,7 @@ router
     .get('/', getGroups)
     .get('/:gid', getGroup)
     .put('/:gid', updateGroup)
-    .delete('/:gid',deleteGroup )
+    .put('/:gid/image',uploaderFirebase.single('file'),addImageGroup)
     .post('/:gid/notices',uploaderFirebase.array('file'),addNoticeToGroup)
     .delete('/:gid/notices',deleteNoticeFromGroup)
     .delete('/:gid/notices/all',deleteAllNoticesFromGroup);
