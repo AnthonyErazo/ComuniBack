@@ -4,7 +4,7 @@ class GroupDao {
     constructor() {
         this.model = groupsModel;
     }
-    async get(limit = 10, page = 1, filter = {}) {
+    async get(limit = 10, page = 1, filter) {
         const options = {
             limit: parseInt(limit),
             page: parseInt(page),

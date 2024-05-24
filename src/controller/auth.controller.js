@@ -12,8 +12,8 @@ class AuthController {
         try {
             const requieredfield = ['email', 'password'];
             const userData = validateFields(req.body, requieredfield);
-
             const userFound = await userService.getUser({ email: userData.email },true);
+            console.log(userFound)
             if (userFound.payload.length!=0) {
                 throw new Error("Ya existe un usuario con ese email")
             }
@@ -63,7 +63,7 @@ class AuthController {
             const token = createToken({ 
                 id: userFound._id,
                 role: 'user',
-                group:userFound.group
+                group:userFound.group._id
             })
             res.cookie(configObject.COOKIE_AUTH, token, {
                 maxAge: 60 * 60 * 1000 * 24,

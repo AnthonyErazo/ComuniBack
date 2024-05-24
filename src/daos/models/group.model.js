@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 
 const noticeSchema = new Schema({
@@ -18,9 +19,6 @@ const groupSchema = new Schema({
     notice: [noticeSchema]
 });
 
+groupSchema.plugin(mongoosePaginate)
 
-const groupsModel = model('groups', groupSchema);
-
-module.exports = {
-    groupsModel
-}
+exports.groupsModel = model('groups', groupSchema);

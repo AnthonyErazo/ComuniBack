@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const GroupController = require('../controller/group.controller');
 const { uploaderFirebase } = require('../utils/uploader');
+const { isAuthenticate } = require('../middleware/verifiqueRole.middleware');
 
 const {
     getGroups,
@@ -17,7 +18,7 @@ const router = Router();
 router
     .get('/', getGroups)
     .get('/:gid', getGroup)
-    .put('/:gid', updateGroup)
+    .put('/:gid',isAuthenticate,updateGroup)
     .put('/:gid/image',uploaderFirebase.single('file'),addImageGroup)
     .post('/:gid/notices',uploaderFirebase.array('file'),addNoticeToGroup)
     .delete('/:gid/notices',deleteNoticeFromGroup)
