@@ -105,40 +105,35 @@ class AuthController {
 
             sendMail(email, 'Recuperación de contraseña', html);
 
-            return res.status(200).json({ message: 'Correo de restablecimiento enviado exitosamente' });
+            return res.status(200).json({ message: 'Correo de restablecimiento enviado' });
         } catch (error) {
-            logger.error(error);
+            console.error(error);
             return res.status(500).json({
                 status: 'error',
-                message: 'Error al iniciar sesion',
-                error: error.message,
-                cause: error.cause
+                message: error.message
             });
         }
     }
     resetPassword = async (req, res) => {
         try {
-            const token = req.params.token;
+            const {token} = req.params;
             const  {password}  = req.body;
             const decoded = jwt.verify(token, configObject.JWT_PRIVATE_KEY);
             const userId = decoded.userId;
 
             const {payload} = await userService.getUser({ _id: userId }, false);
             if (isValidPassword(password, { password: payload.password })) {
-                CustomError.createError(
-                    {
-                        cause: `La contraseña no pueden ser iguales`,
-                        message: `Error al resetear contraseña`,
-                        code: enumErrors.INVALID_TYPES_ERROR
-                    }
-                )
+                throw new Error(`La contraseña no pueden ser iguales`)
             }
             await userService.updateUser(userId,{password:createHash(password)})
 
-            return res.status(200).json({ message: 'Contraseña restablecida con éxito' });
+            return res.status(200).json({ message: 'Contraseña restablecida' });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: 'Error al restablecer la contraseña' });
+            return res.status(500).json({ 
+                status:'error',
+                message: error.message 
+            });
         }
     };
 }

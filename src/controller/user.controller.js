@@ -1,4 +1,5 @@
 const { userService, groupService } = require('../repositories');
+const { deleteFromFirebase } = require('../utils/uploader');
 
 class UserController {
     constructor() {
@@ -21,7 +22,12 @@ class UserController {
         try {
             const { uid } = req.params;
             const user = await this.service.deleteUser(uid);
-            await groupService.deleteGroup(user.payload.group);
+            const group = await groupService.deleteGroup(user.payload.group);
+            if(group&&group.payload.notice.length>0){
+                for(const notice of group.payload.notice){
+                    await deleteFromFirebase(notice.name)
+                }
+            }
             return res.status(200).json(user);
         } catch (error) {
             console.error('Error al cambiar role de usuario:', error);

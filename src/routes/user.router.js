@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const UserController = require('../controller/user.controller.js');
+const { isAdmin } = require('../middleware/verifiqueRole.middleware.js');
 
 const {
     deleteUser,
@@ -11,9 +12,9 @@ const {
 const router = Router();
 
 router
-    .get('/', getUsers)
+    .get('/',isAdmin,getUsers)
     .get('/:uid', getDataUser)
     .put('/:uid', updateUser)
-    .delete('/:uid', deleteUser);
+    .delete('/:uid',isAdmin,deleteUser);
 
 module.exports = router;

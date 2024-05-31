@@ -13,3 +13,10 @@ exports.isAuthenticate=(req, res, next)=>{
         return res.status(403).send('Access forbidden')
     }
 }
+exports.isOwner=(req,res,next)=>{
+    if (req.user) {
+        next()
+    } else {
+        return res.status(403).send('Access forbidden')
+    }
+}

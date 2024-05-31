@@ -86,7 +86,6 @@ class GroupController {
     deleteAllNoticesFromGroup = async (req, res) => {
         try {
             const { gid } = req.params;
-    
             const group = await this.service.getGroup({_id:gid});
             if (group && group.payload.notice.length > 0) {
                 for (const notice of group.payload.notice) {
