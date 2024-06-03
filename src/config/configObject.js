@@ -9,5 +9,7 @@ exports.configObject={
     ADMIN_EMAIL:process.env.ADMIN_EMAIL,
     ADMIN_PASSWORD:process.env.ADMIN_PASSWORD,
     COOKIE_AUTH:process.env.COOKIE_AUTH,
-    FRONT_URL:process.env.FRONT_URL
+    FRONT_URL:process.env.FRONT_URL,
+    GMAIL_USER_APP:process.env.GMAIL_USER_APP,
+    GMAIL_USER_PASS:process.env.GMAIL_USER_PASS,
 }

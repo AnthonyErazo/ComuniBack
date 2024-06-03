@@ -55,8 +55,8 @@ class MessageDao {
                 obj[key] = newMessage[key];
                 return obj;
             }, {});
-        const newMessage =await this.model.create(sanitizedUser)
-        return { success: "success", payload: newMessage };
+        const message =await this.model.create(sanitizedUser)
+        return { success: "success", payload: message };
     }
     async delete(mid) {
         const messageDelete = await this.model.findOneAndDelete({ _id: mid }).lean()

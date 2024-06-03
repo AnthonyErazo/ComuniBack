@@ -10,11 +10,11 @@ const { extractTokenData } = require('./middleware/extractTokenmiddleware')
 const app = express()
 const PORT = configObject.PORT
 
-// app.use(cors({
-//     origin: [configObject.FRONT_URL],
-//     methods: ["GET", "POST","PUT","DELETE"],
-//     credentials: true
-// }))
+app.use(cors({
+    origin: [configObject.FRONT_URL],
+    methods: ["GET", "POST","PUT","DELETE"],
+    credentials: true
+}))
 
 connectDb()
 app.use(express.json())

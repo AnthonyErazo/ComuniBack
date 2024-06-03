@@ -1,12 +1,12 @@
 const nodemailer = require('nodemailer')
-const { configObject } = require('../config/configObject');
+const { configObject } = require('../config/configObject')
 
 const transport = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
     auth: {
-        user: configObject.Gmail_user_app,
-        pass: configObject.Gmail_pass_app
+        user: configObject.GMAIL_USER_APP,
+        pass: configObject.GMAIL_USER_PASS
     }
 })
 

@@ -13,8 +13,7 @@ class AuthController {
             const requieredfield = ['email', 'password'];
             const userData = validateFields(req.body, requieredfield);
             const userFound = await userService.getUser({ email: userData.email },true);
-            console.log(userFound)
-            if (userFound.payload.length!=0) {
+            if (userFound.payload._id) {
                 throw new Error("Ya existe un usuario con ese email")
             }
             const group = await groupService.createGroup();
@@ -56,9 +55,11 @@ class AuthController {
             }
 
             const { payload: userFound } = await userService.getUser({ email: userData.email }, false);
-
+            if(!userFound._id){
+                throw new Error('Usuario no existe')
+            }
             if (!userFound || !isValidPassword(userData.password, { password: userFound.password })) {
-                throw new Error(`Email o contraseña equivocado`)
+                throw new Error(`Contraseña equivocado`)
             }
             const token = createToken({ 
                 id: userFound._id,

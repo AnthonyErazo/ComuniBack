@@ -49,7 +49,7 @@ class UserDao {
         if (user) {
             return { status: "success", payload: user };
         } else {
-            return { status: "success", payload: [] };
+            return { status: "success", payload: {} };
         }
     }
     async create(newUser) {

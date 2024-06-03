@@ -7,14 +7,15 @@ exports.isAdmin=(req, res, next)=>{
 }
 
 exports.isAuthenticate=(req, res, next)=>{
+    console.log(req.user)
     if (req.user) {
         next()
     } else {
         return res.status(403).send('Access forbidden')
     }
 }
-exports.isOwner=(req,res,next)=>{
-    if (req.user) {
+exports.isUser=(req,res,next)=>{
+    if (req.user&&req.user.role === 'user') {
         next()
     } else {
         return res.status(403).send('Access forbidden')

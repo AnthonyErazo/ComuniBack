@@ -18,6 +18,21 @@ class UserController {
             });
         }
     }
+    getUserData = async (req, res) => {
+        try {
+            console.log(res)
+            const uid = req.user
+            console.log(uid)
+            // const user = await this.service.getUser({ _id: uid }, true);
+            return res.status(200).json(uid);
+        } catch (error) {
+            console.error('Error al traer usuario:', error);
+            return res.status(500).json({
+                status: 'error',
+                message: error.message
+            });
+        }
+    }
     deleteUser = async (req, res) => {
         try {
             const { uid } = req.params;
