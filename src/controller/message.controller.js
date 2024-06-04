@@ -20,8 +20,7 @@ class MessageController {
     }
     addMessage = async (req, res) => {
         try {
-            const {message}=req.body
-
+            const message=req.body
             const response = await this.service.createMessage(message);
             return res.status(200).json(response);
         } catch (error) {

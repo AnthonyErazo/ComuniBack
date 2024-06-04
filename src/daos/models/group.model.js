@@ -13,9 +13,15 @@ const groupSchema = new Schema({
         name: { type: String },
         ref: { type: String } 
     },
+    background: {
+        name: { type: String },
+        ref: { type: String } 
+    },
     description: { type: String },
     status: { type: Boolean },
-    linkgroup: { type: String },
+    linkFacebook: { type: String },
+    linkInstagram: { type: String },
+    linkWhatsapp: { type: String },
     notice: [noticeSchema]
 });
 

@@ -4,7 +4,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const messageSchema = new Schema({
     name: { type: String, require },
     email: { type: String, require },
-    message: { type: Boolean, require }
+    message: { type: String, require }
 });
 
 messageSchema.plugin(mongoosePaginate)

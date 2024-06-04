@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const MessageController = require('../controller/message.controller');
+const { isAdmin } = require('../middleware/verifiqueRole.middleware');
 
 const {
     getMessages,
@@ -11,9 +12,9 @@ const {
 const router = Router();
 
 router
-    .get('/', getMessages)
+    .get('/',isAdmin, getMessages)
     .post('/', addMessage)
-    .delete('/:mid', deleteMessage)
-    .post('/:mid', responseMessage);
+    .delete('/:mid',isAdmin, deleteMessage)
+    .post('/:mid',isAdmin, responseMessage);
 
 module.exports = router;

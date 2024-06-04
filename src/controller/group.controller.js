@@ -21,8 +21,8 @@ class GroupController {
 
     getGroups = async (req, res) => {
         try {
-            const { query } = req.query;
-            const group = await this.service.getGroups(10, 1, query);
+            const { limit,page,filter } = req.query;
+            const group = await this.service.getGroups(limit,page, filter);
             return res.status(200).json(group);
         } catch (error) {
             console.error('Error al traer usuarios:', error);
