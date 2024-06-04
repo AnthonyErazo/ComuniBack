@@ -7,9 +7,9 @@ class MessageController {
 
     getMessages = async (req, res) => {
         try {
-            const { query } = req.query;
-            const group = await this.service.getMessages(10, 1, query);
-            return res.status(200).json(group);
+            const { limit,page,filter } = req.query;
+            const response = await this.service.getMessages(limit, page, filter);
+            return res.status(200).json(response);
         } catch (error) {
             console.error('Error al traer mensajes:', error);
             return res.status(500).json({
@@ -48,7 +48,7 @@ class MessageController {
     responseMessage=async(req,res)=>{
         try {
             const { mid } = req.params;
-            const {message}=req.body
+            const message=req.body
             const response=await this.service.response(mid,message)
             return res.status(200).json(response);
         } catch (error) {

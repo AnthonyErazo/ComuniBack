@@ -54,8 +54,8 @@ class UserController {
     }
     getUsers = async (req, res) => {
         try {
-            const { query } = req.query;
-            const users = await this.service.getUsers(10, 1, query);
+            const { limit,page,filter } = req.query;
+            const users = await this.service.getUsers(limit, page, filter);
             return res.status(200).json(users);
         } catch (error) {
             console.error('Error al traer usuarios:', error);
