@@ -55,15 +55,15 @@ class MessageDao {
                 obj[key] = newMessage[key];
                 return obj;
             }, {});
-        const message =await this.model.create(sanitizedUser)
-        return { success: "success", payload: message };
+        await this.model.create(sanitizedUser)
+        return { success: "success", payload: "Mensaje enviado" };
     }
     async delete(mid) {
         const messageDelete = await this.model.findOneAndDelete({ _id: mid }).lean()
         if (messageDelete) {
-            return { status: "success", message: 'Grupo eliminado correctamente', payload: messageDelete }
+            return { status: "success", message: 'Mensaje eliminado' }
         } else {
-            throw new Error('Grupo no encontrado')
+            throw new Error('Mensaje no encontrado')
         }
     }
     async response(mid,message) {

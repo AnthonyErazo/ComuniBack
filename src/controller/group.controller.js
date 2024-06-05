@@ -1,4 +1,5 @@
-const { groupService } = require('../repositories');
+const { groupService, userService } = require('../repositories');
+const { sendMail } = require('../utils/sendMail');
 const { deleteFromFirebase, uploadToFirebase } = require('../utils/uploader');
 
 class GroupController {
@@ -8,7 +9,20 @@ class GroupController {
     getGroup = async (req, res) => {
         try {
             const { gid } = req.params
-            const group = await this.service.getGroup({ _id: gid }, true);
+            const group = await this.service.getGroup({ _id: gid });
+            return res.status(200).json(group);
+        } catch (error) {
+            console.error('Error al traer grupo:', error);
+            return res.status(500).json({
+                status: 'error',
+                message: error.message
+            });
+        }
+    }
+    getMyGroup = async (req, res) => {
+        try {
+            const user = req.user
+            const group = await this.service.getGroup({ _id: user.group });
             return res.status(200).json(group);
         } catch (error) {
             console.error('Error al traer grupo:', error);
@@ -21,8 +35,8 @@ class GroupController {
 
     getGroups = async (req, res) => {
         try {
-            const { limit,page,filter } = req.query;
-            const group = await this.service.getGroups(limit,page, filter);
+            const { limit, page, filter } = req.query;
+            const group = await this.service.getGroups(limit, page, filter);
             return res.status(200).json(group);
         } catch (error) {
             console.error('Error al traer usuarios:', error);
@@ -35,9 +49,33 @@ class GroupController {
     updateGroup = async (req, res) => {
         try {
             const { gid } = req.params;
-            const { groupUpdate } = req.body;
-            const groups = await this.service.updateUser(gid, groupUpdate);
+            const groupUpdate = req.body;
+            const user = req.user
+            if (user.role !== 'admin' && user?.group != gid) {
+                throw new Error('No puede modificar este grupo')
+            }
+            const groups = await this.service.updateGroup(gid, groupUpdate);
             return res.status(200).json(groups);
+        } catch (error) {
+            console.error('Error al traer usuarios:', error);
+            return res.status(500).json({
+                status: 'error',
+                message: error.message
+            });
+        }
+    }
+    deleteGroup = async (req, res) => {
+        try {
+            const { gid } = req.params;
+            const group = await this.service.deleteGroup(gid);
+            const user = await userService.getUser({ group: group.payload._id }, true)
+            const to = user.payload.email
+            const subject = 'Comuni: Eliminacion de grupo'
+            const html = `
+            <p>Su grupo a sido eliminado por no cumplir con las normas</p>
+        `
+            sendMail(to, subject, html)
+            return res.status(200).json(group);
         } catch (error) {
             console.error('Error al traer usuarios:', error);
             return res.status(500).json({
@@ -48,7 +86,7 @@ class GroupController {
     }
     addNoticeToGroup = async (req, res) => {
         try {
-            const { gid } = req.params;
+            const { group } = req.user;
             const files = req.files;
             let notices = [];
 
@@ -57,7 +95,7 @@ class GroupController {
                 notices.push({ ref, name });
             }
 
-            const response = await this.service.addNoticeToGroup(gid, notices);
+            const response = await this.service.addNoticeToGroup(group, notices);
             return res.status(200).json(response);
         } catch (error) {
             console.error('Error agregar noticia:', error);
@@ -70,7 +108,8 @@ class GroupController {
     deleteNoticeFromGroup = async (req, res) => {
         try {
             const { gid } = req.params
-            const { notice } = req.body
+            const user=req.user
+            const { notice } = req.query
 
             await deleteFromFirebase(notice.name)
             const response = await this.service.deleteNoticeFromGroup(gid, notice);
@@ -86,13 +125,13 @@ class GroupController {
     deleteAllNoticesFromGroup = async (req, res) => {
         try {
             const { gid } = req.params;
-            const group = await this.service.getGroup({_id:gid});
+            const group = await this.service.getGroup({ _id: gid });
             if (group && group.payload.notice.length > 0) {
                 for (const notice of group.payload.notice) {
                     await deleteFromFirebase(notice.name);
                 }
             }
-    
+
             const response = await this.service.deleteAllNoticesFromGroup(gid);
             return res.status(200).json(response);
         } catch (error) {
@@ -103,16 +142,30 @@ class GroupController {
             });
         }
     };
-    addImageGroup=async(req,res)=>{
+    addImageGroup = async (req, res) => {
         try {
-            const { gid } = req.params;
+            const { group } = req.user;
             const file = req.file;
-            const imgUser=await this.service.getGroup({_id:gid})
-            if(imgUser.payload.img.name){
+            const imgUser = await this.service.getGroup({ _id: group })
+            if (imgUser.payload.img.name) {
                 await deleteFromFirebase(imgUser.payload.img.name)
             }
             const img = await uploadToFirebase(file);
-            const response = await this.service.updateGroup(gid, {img});
+            const response = await this.service.updateGroup(group, { img });
+            return res.status(200).json(response);
+        } catch (error) {
+            console.error('Error agregar noticia:', error);
+            return res.status(500).json({
+                status: 'error',
+                message: error.message
+            });
+        }
+    }
+    paginateNotices = async (req, res) => {
+        try {
+            const { gid } = req.params;
+            const { limit,page } = req.query;
+            const response = await this.service.paginateNotices(gid,page,limit)
             return res.status(200).json(response);
         } catch (error) {
             console.error('Error agregar noticia:', error);

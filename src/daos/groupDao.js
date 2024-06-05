@@ -36,7 +36,7 @@ class GroupDao {
         }
     }
     async getBy(filter) {
-        let group=await this.model.findOne(filter).lean();
+        let group = await this.model.findOne(filter).lean();
         if (group) {
             return { status: "success", payload: group };
         } else {
@@ -46,33 +46,33 @@ class GroupDao {
             };
         }
     }
-    async create() {
-        const group={
-            name:'',
-            img:{
-                name:'',
-                ref:''
+    async create(notice) {
+        const group = {
+            name: '',
+            img: {
+                name: '',
+                ref: ''
             },
-            description:'',
-            status:false,
-            linkgroup:'',
-            notice:[]
+            description: '',
+            status: false,
+            linkgroup: '',
+            notice: notice
         }
-        const newGroup =await this.model.create(group)
+        const newGroup = await this.model.create(group)
         return { success: "success", payload: newGroup };
     }
     async update(gid, groupUpdate) {
-        const existingGroup = await this.model.findOne({ _id: gid}).lean();
+        const existingGroup = await this.model.findOne({ _id: gid }).lean();
 
         if (existingGroup) {
-            const allowedProperties = ['name','img','description','status','linkgroup'];
-            const sanitizedGroup = Object.keys(groupUpdate)
-                .filter(key => allowedProperties.includes(key))
-                .reduce((obj, key) => {
+            const allowedProperties = ['name', 'img', 'description', 'status', 'linkFacebook', 'linkWhatsapp', 'linkInstagram'];
+            const sanitizedGroup = allowedProperties.reduce((obj, key) => {
+                if (key in groupUpdate) {
                     obj[key] = groupUpdate[key];
-                    return obj;
-                }, {});
-            const result = await this.model.updateOne({ _id: gid}, sanitizedGroup);
+                }
+                return obj;
+            }, {});
+            const result = await this.model.updateOne({ _id: gid }, sanitizedGroup);
             if (result.modifiedCount > 0) {
                 return { status: "success", message: 'Grupo actualizado correctamente' };
             } else {
@@ -121,6 +121,25 @@ class GroupDao {
             return { status: "success", message: 'Todas las noticias fueron eliminadas' };
         } else {
             throw new Error('No se pudieron eliminar las noticias');
+        }
+    }
+    async paginateNotices(gid, page = 1, limit = 10) {
+        try {
+            const group = await this.model.findById(gid);
+            const notices = group.notice;
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
+            const paginatedNotices = notices.slice(startIndex, endIndex);
+            const totalPages = Math.ceil(notices.length / limit);
+
+            return {
+                status: "success",
+                payload: paginatedNotices,
+                totalPages,
+                page
+            };
+        } catch (error) {
+            throw new Error('Error al paginar las noticias del grupo:', error);
         }
     }
 }

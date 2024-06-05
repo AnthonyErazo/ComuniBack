@@ -7,7 +7,6 @@ exports.isAdmin=(req, res, next)=>{
 }
 
 exports.isAuthenticate=(req, res, next)=>{
-    console.log(req.user)
     if (req.user) {
         next()
     } else {

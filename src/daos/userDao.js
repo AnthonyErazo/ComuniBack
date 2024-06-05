@@ -1,3 +1,4 @@
+const { createHash } = require('../utils/hasPassword.js');
 const { usersModel } = require('./models/user.model.js');
 
 class UserDao {
@@ -73,6 +74,9 @@ class UserDao {
                     obj[key] = userUpdate[key];
                     return obj;
                 }, {});
+            if(sanitizedUser.password){
+                sanitizedUser.password=createHash(sanitizedUser.password)
+            }
             const result = await this.model.updateOne({ _id: uid }, sanitizedUser);
             if (result.modifiedCount > 0) {
                 return { status: "success", message: 'Usuario actualizado correctamente' };

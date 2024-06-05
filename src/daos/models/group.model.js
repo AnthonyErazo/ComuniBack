@@ -27,4 +27,12 @@ const groupSchema = new Schema({
 
 groupSchema.plugin(mongoosePaginate)
 
+groupSchema.statics.paginateNotices = async function(groupId, page = 1, limit = 10) {
+    const result = await this.findById(groupId)
+        .select('notice')
+        .paginate({}, { page, limit });
+
+    return result;
+};
+
 exports.groupsModel = model('groups', groupSchema);

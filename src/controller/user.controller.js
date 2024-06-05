@@ -20,9 +20,7 @@ class UserController {
     }
     getUserData = async (req, res) => {
         try {
-            console.log(res)
             const uid = req.user
-            console.log(uid)
             // const user = await this.service.getUser({ _id: uid }, true);
             return res.status(200).json(uid);
         } catch (error) {
@@ -67,10 +65,10 @@ class UserController {
     }
     updateUser = async (req, res) => {
         try {
-            const { uid } = req.params;
+            const user=req.user
             const userUpdate = req.body;
-            const users = await this.service.updateUser(uid,userUpdate);
-            return res.status(200).json(users);
+            const response = await this.service.updateUser(user.id,userUpdate);
+            return res.status(200).json(response);
         } catch (error) {
             console.error('Error al traer usuarios:', error);
             return res.status(500).json({
