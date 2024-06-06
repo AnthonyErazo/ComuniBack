@@ -161,6 +161,25 @@ class GroupController {
             });
         }
     }
+    addBackgroundGroup = async (req, res) => {
+        try {
+            const { group } = req.user;
+            const file = req.file;
+            const imgUser = await this.service.getGroup({ _id: group })
+            if (imgUser.payload.img.name) {
+                await deleteFromFirebase(imgUser.payload.img.name)
+            }
+            const background = await uploadToFirebase(file);
+            const response = await this.service.updateGroup(group, { background });
+            return res.status(200).json(response);
+        } catch (error) {
+            console.error('Error agregar noticia:', error);
+            return res.status(500).json({
+                status: 'error',
+                message: error.message
+            });
+        }
+    }
     paginateNotices = async (req, res) => {
         try {
             const { gid } = req.params;

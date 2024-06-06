@@ -20,9 +20,12 @@ class UserController {
     }
     getUserData = async (req, res) => {
         try {
-            const uid = req.user
-            // const user = await this.service.getUser({ _id: uid }, true);
-            return res.status(200).json(uid);
+            const user = req.user
+            if(user.role=='admin'){
+                return res.status(200).json({...user,name:'Admin'});
+            }
+            const {payload} = await this.service.getUser({ _id: user.uid }, true);
+            return res.status(200).json({...user,name:payload.name,img:payload.img?.ref});
         } catch (error) {
             console.error('Error al traer usuario:', error);
             return res.status(500).json({

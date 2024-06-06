@@ -65,7 +65,7 @@ class GroupDao {
         const existingGroup = await this.model.findOne({ _id: gid }).lean();
 
         if (existingGroup) {
-            const allowedProperties = ['name', 'img', 'description', 'status', 'linkFacebook', 'linkWhatsapp', 'linkInstagram'];
+            const allowedProperties = ['name', 'img','background', 'description', 'status', 'linkFacebook', 'linkWhatsapp', 'linkInstagram'];
             const sanitizedGroup = allowedProperties.reduce((obj, key) => {
                 if (key in groupUpdate) {
                     obj[key] = groupUpdate[key];

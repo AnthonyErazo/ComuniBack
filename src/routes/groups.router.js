@@ -14,6 +14,7 @@ const {
     deleteAllNoticesFromGroup,
     deleteNoticeFromGroup,
     addImageGroup,
+    addBackgroundGroup
 } = new GroupController()
 
 const router = Router();
@@ -24,6 +25,7 @@ router
     .get('/:gid/notices', paginateNotices)
     .get('/:gid', getGroup)
     .put('/image',isUser,uploaderFirebase.single('file'),addImageGroup)
+    .put('/background',isUser,uploaderFirebase.single('file'),addBackgroundGroup)
     .put('/:gid',isAuthenticate,updateGroup)
     .delete('/:gid/notices',isAuthenticate,deleteNoticeFromGroup)
     .delete('/:gid',isAdmin,deleteGroup)
