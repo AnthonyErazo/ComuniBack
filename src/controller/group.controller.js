@@ -119,12 +119,14 @@ class GroupController {
             const { gid } = req.params
             const user = req.user
             const { notice } = req.query
-
+            if(user.role!='admin'&&user.group!=gid){
+                throw new Error('No autorizado para eliminar esta noticia')
+            }
             await deleteFromFirebase(notice.name)
             const response = await this.service.deleteNoticeFromGroup(gid, notice);
             return res.status(200).json(response)
         } catch (error) {
-            console.error('Error agregar noticia:', error);
+            console.error('Error al eliminar noticia:', error);
             return res.status(500).json({
                 status: 'error',
                 message: error.message
@@ -134,7 +136,11 @@ class GroupController {
     deleteAllNoticesFromGroup = async (req, res) => {
         try {
             const { gid } = req.params;
+            const user = req.user
             const group = await this.service.getGroup({ _id: gid });
+            if(user.role!='admin'&&user.group!=gid){
+                throw new Error('No autorizado para eliminar esta noticia')
+            }
             if (group && group.payload.notice.length > 0) {
                 for (const notice of group.payload.notice) {
                     await deleteFromFirebase(notice.name);
