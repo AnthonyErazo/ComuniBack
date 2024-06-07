@@ -24,8 +24,8 @@ class UserController {
             if(user.role=='admin'){
                 return res.status(200).json({...user,name:'Admin'});
             }
-            const {payload} = await this.service.getUser({ _id: user.uid }, true);
-            return res.status(200).json({...user,name:payload.name,img:payload.img?.ref});
+            const {payload} = await this.service.getUser({ _id: user.id }, true);
+            return res.status(200).json({...user,...payload});
         } catch (error) {
             console.error('Error al traer usuario:', error);
             return res.status(500).json({

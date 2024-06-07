@@ -37,7 +37,7 @@ class MessageDao {
         }
     }
     async getBy(filter) {
-        let group=await this.model.findOne(filter).lean();
+        let group = await this.model.findOne(filter).lean();
         if (group) {
             return { status: "success", payload: group };
         } else {
@@ -48,7 +48,7 @@ class MessageDao {
         }
     }
     async create(newMessage) {
-        const allowedProperties=['name','email','message']
+        const allowedProperties = ['name', 'email', 'message']
         const sanitizedUser = Object.keys(newMessage)
             .filter(key => allowedProperties.includes(key))
             .reduce((obj, key) => {
@@ -66,15 +66,20 @@ class MessageDao {
             throw new Error('Mensaje no encontrado')
         }
     }
-    async response(mid,message) {
-        const messageFind=await this.model.findOne({_id:mid}).lean()
-        const to=messageFind.email
-        const subject='Comuni: Respuesta a tu mensaje'
-        const html=`
+    async response(mid, message) {
+        const messageFind = await this.model.findOne({ _id: mid }).lean()
+        const to = messageFind.email
+        const subject = 'Comuni: Respuesta a tu mensaje'
+        const html = `
             <p>${message}</p>
         `
-        sendMail(to,subject,html)
-        return {status:"success",message:"Mensaje enviado con exito"}
+        try {
+            sendMail(to, subject, html);
+        } catch (error) {
+            throw new Error('No se pudo enviar el correo');
+
+        }
+        return { status: "success", message: "Mensaje enviado con exito" }
     }
 }
 

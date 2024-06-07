@@ -46,17 +46,23 @@ class GroupDao {
             };
         }
     }
-    async create(notice) {
+    async create() {
         const group = {
             name: '',
             img: {
                 name: '',
                 ref: ''
             },
+            background: {
+                name: '',
+                ref: ''
+            },
             description: '',
             status: false,
-            linkgroup: '',
-            notice: notice
+            linkFacebook: '',
+            linkWhatsapp: '',
+            linkInstagram: '',
+            notice: []
         }
         const newGroup = await this.model.create(group)
         return { success: "success", payload: newGroup };
