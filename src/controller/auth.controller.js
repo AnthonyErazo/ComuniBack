@@ -47,9 +47,7 @@ class AuthController {
                 res.cookie(configObject.COOKIE_AUTH, token, {
                     maxAge: 60 * 60 * 1000 * 24,
                     httpOnly: true,
-                    secure: true,
-                    sameSite: 'None',
-                    credentials: true
+                    sameSite: 'Lax',
                 });
                 return res.status(200).json({ status: 'success', message: 'Login successful' });
             }
@@ -69,9 +67,7 @@ class AuthController {
             res.cookie(configObject.COOKIE_AUTH, token, {
                 maxAge: 60 * 60 * 1000 * 24,
                 httpOnly: true,
-                secure: true,
-                sameSite: 'None',
-                credentials: true
+                sameSite: 'Lax',
             });
             return res.status(200).json({ status: 'success', message: 'Login successful' });
         } catch (error) {
@@ -86,9 +82,7 @@ class AuthController {
         req.user = null
         res.clearCookie(configObject.COOKIE_AUTH, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'None',
-            credentials: true
+            sameSite: 'Lax',
         });
         return res.status(200).send({ status: 'success', message: 'Logout successful' })
     }

@@ -1,7 +1,7 @@
 const { configObject } = require('../config/configObject');
 const jwt = require('jsonwebtoken')
 exports.extractTokenData = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.cookies[configObject.COOKIE_AUTH];
     if (!token) {
         req.user=null
         next()
